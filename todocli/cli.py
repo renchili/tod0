@@ -1,6 +1,7 @@
 import argparse
 import shlex
 import sys
+import pytz
 
 import todocli.todo_api as todo_api
 from todocli.utils.datetime_util import (
@@ -11,6 +12,12 @@ from todocli.utils.datetime_util import (
 from todocli.error import eprint
 from todocli.help_msg import help_msg
 
+
+local_tz = pytz.timezone('Asia/Shanghai')
+
+def utc_to_local(utc_datetime):
+    local_datetime = utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    return local_tz.normalize(local_datetime)
 
 class InvalidTaskPath(Exception):
     def __init__(self, path):
@@ -53,6 +60,14 @@ def lst(args):
     tasks_titles = [x.title for x in tasks]
     print_list(tasks_titles, args.display_linenums)
 
+def read(args):
+    tasks = todo_api.query_tasks(args.list_name)
+    for task in tasks:
+        if task.title == args.task_name:
+            print("Title:\t%s" % task.title)
+            print("Status:\t%s" % task.status)
+            print("Priority:\t%s" % task.importance)
+            print("Created Time:\t%s" % utc_to_local(task.created_datetime).strftime("%m/%d/%Y, %H:%M:%S"))
 
 def new(args):
     task_list, name = parse_task_path(args.task_name)
@@ -133,7 +148,18 @@ def setup_parser():
                                     all tasks from the default task list will be displayed",
         )
         subparser.set_defaults(func=lst)
-
+    def parser_read():
+        subparser = subparsers.add_parser("read", help="read detail about a task")
+        subparser.add_argument(
+                "list_name",
+                nargs="?",
+                default="Tasks",
+                help="This optional argument specifies the list from which the tasks are displayed."
+                "If this parameter is omitted, \
+                                    all tasks from the default task list will be displayed",
+                )
+        subparser.add_argument("task_name", help=helptext_task_name)
+        subparser.set_defaults(func=read)
     def parser_new():
         subparser = subparsers.add_parser("new", help="Add a new task")
         subparser.add_argument("task_name", help=helptext_task_name)
@@ -157,6 +183,7 @@ def setup_parser():
 
     parser_lst()
     parser_ls()
+    parser_read()
     parser_new()
     parser_newl()
     parser_complete()
