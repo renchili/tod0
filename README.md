@@ -2,7 +2,7 @@ tod0
 ====
 
 A Terminal Client for Microsoft To-Do.
-
+The original github lik is [![tod0](https://github.com/kiblee/tod0)]
 [![CircleCI](https://circleci.com/gh/kiblee/tod0.svg?style=svg&circle-token=7c223e0b25b7428107e841926315e74478cacb55)](https://circleci.com/gh/kiblee/tod0)
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
@@ -26,7 +26,7 @@ pip install tod0
 ### Install from source
 
 ```sh
-git clone https://github.com/kiblee/tod0.git
+git clone https://github.com/renchili/tod0.git
 cd tod0
 python setup.py install
 ```
@@ -63,7 +63,11 @@ Usage:
                                 Create a new task
                 task            Task to create. See 'Specifying a task' for details.
                 -r time         Set a reminder. See 'Specifying time' for details.              
-            
+
+            read <list_name> <task_name>
+ 		list_name	Name of the list
+		task		Task to get detail
+
             newl <list_name>    Create a new list
                 list_name       Name of the list
                 
